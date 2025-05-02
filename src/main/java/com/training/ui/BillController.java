@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.training.dto.BillOrderDTO;
+import com.training.dto.request.BillAddRequest;
 import com.training.model.Bill;
 import com.training.model.Customer;
 import com.training.service.BillService;
@@ -23,15 +25,17 @@ public class BillController {
 	@Autowired
 	BillService service;
 
-	@Autowired
-	RestTemplate template;
+	
 
-	@PostMapping(value = "/add")
-	public ResponseEntity<Bill> f1(@RequestBody Bill bill) {
-		Bill bill1 = this.service.addNewBill(bill);
-		String url = "http://localhost:9121/api/showAll";
-		int result = template.getForObject(url, null, Customer.class);
-		return new ResponseEntity<>(bill1, HttpStatus.CREATED);
+	@PostMapping(value = "/addBill")
+	public ResponseEntity<String> f1(@RequestBody BillAddRequest addRequest) {
+		BillOrderDTO billOrderDTO = this.service.addNewBill(addRequest);
+		if(billOrderDTO!=null) {
+		return new ResponseEntity<>("Success", HttpStatus.CREATED);
+		}
+		else {
+			return new ResponseEntity<>("Failed", HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@GetMapping(value = "/showAll")
